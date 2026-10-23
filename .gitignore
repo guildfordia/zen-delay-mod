@@ -1,0 +1,5 @@
+# Never commit firmware images or update files (Erica Synths code)
+*.wav
+*.bin
+build/
+__pycache__/
