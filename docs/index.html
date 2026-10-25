@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zen Delay Guildfordia's Mod — Erica Synths Zen Delay firmware mod</title>
+<meta name="description" content="Unofficial open-source firmware mod for the Erica Synths Zen Delay: tap tempo divisions with dotted and triplet values, MIDI CC control, MIDI clock sync, input send for dub throws, freeze, and a TAP LED that shows the delay state.">
+<link rel="canonical" href="https://guildfordia.github.io/zen-delay-mod/">
+<meta property="og:title" content="Zen Delay Guildfordia's Mod">
+<meta property="og:description" content="Unofficial firmware mod for the Erica Synths Zen Delay: tap divisions, MIDI CC, dub throws, freeze.">
+<meta property="og:url" content="https://guildfordia.github.io/zen-delay-mod/">
+<meta property="og:type" content="website">
+<style>
+  :root { --bg: #fafaf8; --fg: #1d1d1b; --muted: #5f5f5a; --line: #deded8; --accent: #b4462a; --code: #efefe9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #141413; --fg: #ececea; --muted: #a3a39d; --line: #33332f; --accent: #e8805f; --code: #20201e; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 1.25rem; margin: 40px 0 10px; border-top: 1px solid var(--line); padding-top: 24px; }
+  p.lead { color: var(--muted); margin: 0 0 20px; }
+  a { color: var(--accent); }
+  .warn { border-left: 3px solid var(--accent); padding: 8px 14px; background: var(--code); border-radius: 4px; }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .9em; background: var(--code); border-radius: 4px; }
+  code { padding: 1px 5px; }
+  pre { padding: 12px 14px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .95em; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .wrap { overflow-x: auto; }
+  .btn { display: inline-block; margin-top: 8px; padding: 10px 18px; border: 1px solid var(--accent); border-radius: 6px; text-decoration: none; }
+  footer { margin-top: 48px; color: var(--muted); font-size: .85em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Zen Delay Guildfordia's Mod</h1>
+  <p class="lead">An unofficial, open-source firmware mod for the <strong>Erica Synths Zen Delay</strong> (firmware 1.1.0):
+  tap tempo with musical divisions, MIDI CC control, MIDI clock sync, input send for dub throws, freeze,
+  and a TAP LED that shows what the delay is doing.</p>
+  <a class="btn" href="https://github.com/guildfordia/zen-delay-mod">Get it on GitHub</a>
+
+  <p class="warn"><strong>Unofficial, at your own risk.</strong> Not affiliated with or endorsed by Erica Synths or Ninja Tune.
+  No Erica Synths code is distributed: you download the official update file from Erica Synths and a small Python
+  script patches it on your computer. The Zen's bootloader is never touched, so you can always go back to the
+  official firmware.</p>
+
+  <h2>Features</h2>
+  <ul>
+    <li><strong>Three time modes on the TAP button</strong>: free time, tapped tempo, MIDI clock sync (tap / hold 1.5 s / hold 3 s).</li>
+    <li><strong>13 symmetric divisions</strong> in tap and sync mode, x1 at 12 o'clock:
+      <code>/8 /4 /3 /2 /1.5 /1.33 | x1 | x1.33 x1.5 x2 x3 x4 x8</code> — dotted eighth, triplets, dotted quarter…</li>
+    <li><strong>MIDI CC on channel 16</strong>: feedback, delay time, delay mode, tap, time mode.</li>
+    <li><strong>Input send</strong> (CC 21) for dub throws: close the input, the repeats keep ringing.</li>
+    <li><strong>Freeze</strong>: double tap or CC 22 — the delay content loops forever.</li>
+    <li><strong>TAP LED</strong>: off in free mode, flashes on the beat in tap mode, on with a blackout on each received
+      clock beat in sync mode, fast blink when frozen.</li>
+  </ul>
+
+  <h2>MIDI CC chart (channel 16)</h2>
+  <div class="wrap"><table>
+    <tr><th>CC</th><th>Function</th><th>Values</th></tr>
+    <tr><td>20</td><td>Feedback</td><td>0–127</td></tr>
+    <tr><td>21</td><td>Input send (dub throws)</td><td>0 closed … 127 open (default)</td></tr>
+    <tr><td>22</td><td>Freeze</td><td>0–63 off, 64–127 on</td></tr>
+    <tr><td>23</td><td>Delay time</td><td>0–127 (free: time, tap/sync: division)</td></tr>
+    <tr><td>24</td><td>Delay mode</td><td>off, tape, tape ping-pong, digital ping-pong, digital</td></tr>
+    <tr><td>25</td><td>Tap</td><td>any value &gt; 0 = one tap</td></tr>
+    <tr><td>26</td><td>Time mode</td><td>0–42 free, 43–85 tap, 86–127 sync</td></tr>
+  </table></div>
+
+  <h2>Install</h2>
+  <ol>
+    <li>Download the official <code>ZenDelay_V1.1.0.wav</code> from Erica Synths.</li>
+    <li>Patch it (Python 3 + numpy):
+<pre>python zen_patch.py ZenDelay_V1.1.0.wav zen_delay_guildfordia_mod.wav</pre></li>
+    <li>Flash it like an official update: hold TAP while powering on, IN LEVEL at 12 o'clock, play the file
+      into L IN (a computer headphone output works best).</li>
+  </ol>
+  <p>Full guide, troubleshooting and sources: <a href="https://github.com/guildfordia/zen-delay-mod">github.com/guildfordia/zen-delay-mod</a>.
+  Ideas and bug reports are welcome in the GitHub issues.</p>
+
+  <footer>
+    Mod by guildfordia, developed with the help of an AI assistant and tested on real hardware. MIT licence for the mod's
+    own code. "Erica Synths", "Zen Delay" and "Ninja Tune" are trademarks of their respective owners. The update file
+    format is the Mutable Instruments stm-audio-bootloader (MIT).
+  </footer>
+</main>
+</body>
+</html>
