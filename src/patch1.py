@@ -123,7 +123,8 @@ def apply(img, patches):
 
 
 def main():
-    root = Path(__file__).resolve().parent.parent
+    here = Path(__file__).resolve().parent
+    root = here.parents[1]  # dev repo root (firmware/ lives there); patcher/src/ -> patcher/ -> root
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else root / "firmware/decoded/zen_1.1.0.bin"
     dst = Path(sys.argv[2]) if len(sys.argv) > 2 else root / "firmware/patched/zen_1.1.0_patch1.bin"
 
@@ -131,7 +132,7 @@ def main():
     if hashlib.sha256(img).hexdigest() != ORIG_SHA256:
         sys.exit(f"{src}: sha256 mismatch, not the original 1.1.0 image")
 
-    apply(img, PATCHES + build_hooks(root / "patch", root / "patch/build"))
+    apply(img, PATCHES + build_hooks(here, here / "build"))
 
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_bytes(img)
