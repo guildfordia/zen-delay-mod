@@ -22,6 +22,9 @@ SECTIONS
     .div_site 0x0800b5d6 : { *(.div_site) }       /* TAP/SYNC division chain (stock compare chains) */
     .divz 0x08013770 : { *(.divz) }               /* table-driven divisions incl. x0.75 */
     .div_ret 0x0800b684 : { *(.div_ret) }         /* stock pickup code: s0 = DIV */
+    .fbk_site 0x0800b4f6 : { *(.fbk_site) }       /* control routine: FEEDBACK curve value -> [base+0xc58] */
+    .fbk 0x08013830 : { *(.fbk) }                 /* freeze-safe feedback store, freed printf body after .divz */
+    .ret_fbk 0x0800b4fa : { *(.ret_fbk) }
     .ret_dbl 0x0800ba10 : { *(.ret_dbl) }
     .tap_fresh_exit 0x0800baae : { *(.tap_fresh_exit) }
     .ret_clock 0x0800bb8a : { *(.ret_clock) }     /* labels only, 0 bytes */

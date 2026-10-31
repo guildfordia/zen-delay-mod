@@ -47,9 +47,11 @@ send_hook:
     str     r2, [r1, #4]
     str     r2, [r1, #8]
 1:  vldr    s2, [r1, #4]                @ target
-    @ CC 22 FREEZE (>= 64): input closed and feedback forced to exactly 1.0 (both DSP algorithms read [base+0xc58],
-    @ rewritten from the FEEDBACK knob by the control routine at every pass -> overriding it here, per sample,
-    @ always wins; on release the knob value comes back by itself). The stock 1000-sample feedback smoothing
+    @ CC 22 FREEZE (>= 64): input closed and feedback forced to exactly 1.0 (both DSP algorithms read [base+0xc58]).
+    @ The control routine (TIM2 interrupt) also writes [base+0xc58] from the FEEDBACK knob: when it lands between
+    @ this store and the algorithm's read, that sample used the knob value (measured 2026-10-31: ~11 % of samples,
+    @ frozen loop lost -1.06 dB/pass with FEEDBACK at 0). fbk_hook below makes that writer agree while frozen.
+    @ On release the knob value comes back by itself. The stock 1000-sample feedback smoothing
     @ (state at 0x2000bb30) glides to 1.0 in ~20 ms.
     ldr     r2, =CCRAM
     ldrb    r2, [r2, #VALUES + CC_FREEZE]
@@ -105,6 +107,27 @@ send_cc:
     .float  0.007874015748031496
     .ltorg
     .global send_cc
+
+@ ---- 0x0800b4f6: replaces `str.w r0, [r8, #0xc58]` (4 bytes) in the control routine FUN_0800b398:
+@ r0 = FEEDBACK curve value for the knob. While frozen, store 1.0 instead, so both writers of [base+0xc58]
+@ agree. r0/r1 and the flags are overwritten by the stock code right after (0x0800b4fa..0x0800b514).
+    .section .fbk_site, "ax"
+    b.w     fbk_hook
+
+    .section .fbk, "ax"
+    .thumb_func
+fbk_hook:
+    ldr     r1, =CCRAM
+    ldrb    r1, [r1, #VALUES + CC_FREEZE]
+    cmp     r1, #64
+    it      hs
+    movhs.w r0, #0x3f800000             @ 1.0f
+    str.w   r0, [r8, #0xc58]            @ the replaced instruction
+    b.w     ret_fbk
+    .ltorg
+
+    .section .ret_fbk, "ax"
+ret_fbk:
 
     .section .ret_send, "ax"
 ret_send:

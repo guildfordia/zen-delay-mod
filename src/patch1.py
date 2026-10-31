@@ -81,6 +81,8 @@ HOOKS = [
     (".frzled", (0x08013730, 0x08013770)),        # freeze LED cue, freed printf body after .dbl
     (".div_site", bytes.fromhex("81b2b1f5")),     # 0x0800b5d6 uxth r1,r0 + half cmp.w -> b.w div_zones (x0.75)
     (".divz", (0x08013770, 0x08013A64)),          # division table, freed printf body after .frzled
+    (".fbk_site", bytes.fromhex("c8f8580c")),     # 0x0800b4f6 str.w r0,[r8,#0xc58] -> b.w fbk_hook (freeze = 1.0)
+    (".fbk", (0x08013830, 0x08013A64)),           # freeze-safe feedback store, freed printf body after .divz
 ]
 
 
