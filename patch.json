@@ -3,7 +3,7 @@
  "firmware": "Erica Synths Zen Delay 1.1.0 (official update file)",
  "base_address": "0x08008000",
  "input_sha256": "22ad0e738b7e113311d102c4c340c237575cd166847b98b806bf876aa1f282f7",
- "output_sha256": "654b342c520363e224a0477c835dfebde7785ec8e4634b1471cf5e61cef058f4",
+ "output_sha256": "f6f45caeabd5dc4348dc7f22e85769965fe4271d3a05bb1d6ffda4aa1a3197e7",
  "note": "Only the bytes changed by the mod. The patcher checks the input and output fingerprints.",
  "changes": [
   {
@@ -21,6 +21,10 @@
   {
    "offset": 13522,
    "bytes": "f6fc"
+  },
+  {
+   "offset": 13558,
+   "bytes": "08f09bb9"
   },
   {
    "offset": 13654,
@@ -132,7 +136,11 @@
   },
   {
    "offset": 47119,
-   "bytes": "00000040400000803fc50e0000000080400000803fffff0000000000410000803f"
+   "bytes": "00000040400000803fc50e0000000080400000803fffff0000000000410000803f04498979402928bf4f"
+  },
+  {
+   "offset": 47162,
+   "bytes": "7e50c8f8580cf7f75bbe3cbb0020"
   },
   {
    "offset": 58600,
